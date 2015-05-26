@@ -6,9 +6,14 @@ db = [[0,0,0,0,0],[0,0,0,0,0],[0,0,"FREE SPACE",0,0],[0,0,0,0,0],[0,0,0,0,0]] #T
 ###Functions for operation
 
 def printboard(board): #prints the bingo board.  used for debugging
-    for i in [0,1,2,3,4]:
-        print(str(board[0][i]) + "," + str(board[1][i]) + "," + str(board[2][i]) +
-              "," + str(board[3][i]) + "," + str(board[4][i]))
+    for i in range(0,5):
+        strout = ""
+        for j in range(0,5):
+            if j < 4:
+                strout += (str(board[i][j]) + ",")
+            else:
+                strout += (str(board[i][j]) + "\n")
+        print(strout)
 
 def getrand(input): #faster than typing random.randrange every time it's needed
     return random.randrange(0,input)
@@ -55,7 +60,12 @@ def writeboard(board): #saves the board as out.csv in the working directory
     seq = []
 
     for i in range(0,5):
-        strout = (str(board[0][i]) + "," + str(board[1][i]) + "," + str(board[2][i]) + "," + str(board[3][i]) + "," + str(board[4][i]) + '\n')
+        strout = ""
+        for j in range(0,5):
+            if j < 4:
+                strout += (str(board[i][j]) + ",")
+            else:
+                strout += (str(board[i][j]) + "\n")
         seq.append(strout)
     
     f.writelines(seq)
@@ -65,14 +75,15 @@ def genboard(): #creates, fills, and writes a board
     newboard = db
     fillboard(newboard, fillbuffer())
     writeboard(newboard)
+    
     return
 
-#filenames
+###filenames
 common = loadfile('sample_common')
 uncommon = loadfile('sample_uncommon')
 rare = loadfile('sample_rare')
 ultrarare = loadfile('sample_ultrarare')
 legendary = loadfile('sample_legendary')
 
-#execution
+###execution
 genboard()
