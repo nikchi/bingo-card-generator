@@ -86,4 +86,5 @@ ultrarare = loadfile('sample_ultrarare')
 legendary = loadfile('sample_legendary')
 
 ###execution
+random.seed(time.time())
 genboard()
