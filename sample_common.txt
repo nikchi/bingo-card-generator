@@ -1,6 +1,6 @@
 'Chicken patty with cheese'
 'I'm the editor in chief'
-'My girlfriend, Olivia'
+'My girlfriend Olivia'
 'On a train'
 'Stute family'
 'Windows beast'

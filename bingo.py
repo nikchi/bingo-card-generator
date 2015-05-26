@@ -18,40 +18,34 @@ def loadfile(rarity): #opens and parses a file corresponding to a rarity level
     content = e.read().splitlines()
     return content
 
-def getslot(board, rarity): #ugly and will be replaced with something more elegant.  picks a spot on the card that hasn't been filled in yet
-    firstnum = getrand(5)
-    secondnum = getrand(5)
-    if board[firstnum][secondnum] != 0:
-        return getslot(board, rarity)
-    else:
-        board[firstnum][secondnum] = getitem(rarity)
-
-def getitem(rarity): #randomly chooses an item of a particular rarity, and then removes it from that list so it can't be picked again
-    size = len(rarity)
+def getitem(buffer): #randomly chooses an item of a particular rarity, and then removes it from that list so it can't be picked again
+    size = len(buffer)
     num = getrand(size)
-    out = rarity.pop(num)
+    out = buffer.pop(num)
     return out
 
-def fillboard(board): 
+def fillbuffer(): #gets items from different rarity lists and puts them into a list for fillboard
+    buffer = []
     for i in range (0,9):
-        getslot(board, common)
+        buffer.append(getitem(common))
     for i in range (0,9):
-        getslot(board, uncommon)
+        buffer.append(getitem(uncommon))
     for i in range (0,4):
-        getslot(board, rare)
+        buffer.append(getitem(rare))
     for i in range (0,1):
-        getslot(board, ultrarare)
+        buffer.append(getitem(ultrarare))
     for i in range (0,1):
-        getslot(board, legendary)
+        buffer.append(getitem(legendary))
+    return buffer
+
+def fillboard(board, buffer): #fills in each empty slot on the board with a random item from the buffer
+    for i in range(0,5):
+        for j in range(0,5):
+            if board[i][j] == 0:
+                board[i][j] = getitem(buffer)
     return 0
 
-def genboard():
-    newboard = db
-    fillboard(newboard)
-    writeboard(newboard)
-    return
-
-def writeboard(board):
+def writeboard(board): #saves the board as out.csv in the working directory
     try:
         os.remove(path + 'out.csv')
     except OSError:
@@ -67,10 +61,18 @@ def writeboard(board):
     f.writelines(seq)
     return
 
+def genboard(): #creates, fills, and writes a board
+    newboard = db
+    fillboard(newboard, fillbuffer())
+    writeboard(newboard)
+    return
+
+#filenames
 common = loadfile('sample_common')
 uncommon = loadfile('sample_uncommon')
 rare = loadfile('sample_rare')
 ultrarare = loadfile('sample_ultrarare')
 legendary = loadfile('sample_legendary')
 
+#execution
 genboard()
