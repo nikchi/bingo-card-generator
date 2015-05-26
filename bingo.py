@@ -1,61 +1,24 @@
 import random
-import sys
 import os
-path = 'C:/Users/Class2018/Desktop/bingo/'
-db = [[0,0,0,0,0],[0,0,0,0,0],[0,0,"Dennis makes a spreadsheet (FREE SPACE)",0,0],[0,0,0,0,0],[0,0,0,0,0]]
-wbv = [[0,0,0,0,0],[0,0,0,0,0],[0,0,1,0,0],[1,1,1,1,1],[0,0,0,0,0]]
-wbh = [[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[1,0,1,0,1],[0,0,1,0,0]]
+path = os.getcwd() + "\\" #Gets the directory.  Reads content files and saves output here.
+db = [[0,0,0,0,0],[0,0,0,0,0],[0,0,"FREE SPACE",0,0],[0,0,0,0,0],[0,0,0,0,0]] #The default, empty board.  0 is not a number used in bingo.  Signifies that a space hasn't been filled yet
 
-"""
-#test horizontal bingo
-def vcheck(board):
-    for i in [0,1,2,3,4]:
-        bingo = 1
-        for j in [0,1,2,3,4]:
-            if board[i][j] == 0:
-                bingo = 0
-        if bingo == 1:
-            print("BINGO!")
-            break
-        else:
-            print("No bingo!")
-    return bingo
-            
-def hcheck(board):
-    for i in [0,1,2,3,4]:
-        bingo = 1
-        for j in [0,1,2,3,4]:
-            if board[j][i] == 0:
-                bingo = 0
-        if bingo == 1:
-            print("BINGO!")
-            break
-        else:
-            print("No bingo!")
-    return 1
-            
-def check(board):
-    if vcheck(board) == 1:
-        return 1
-    else:
-        return hcheck(board)
-"""
+###Functions for operation
 
-def printboard(board):
+def printboard(board): #prints the bingo board.  used for debugging
     for i in [0,1,2,3,4]:
         print(str(board[0][i]) + "," + str(board[1][i]) + "," + str(board[2][i]) +
               "," + str(board[3][i]) + "," + str(board[4][i]))
 
-def getrand(size):
-    x = random.randrange(0,size)
-    return x
+def getrand(input): #faster than typing random.randrange every time it's needed
+    return random.randrange(0,input)
 
-def loadfile(rarity):
+def loadfile(rarity): #opens and parses a file corresponding to a rarity level
     e = open(path + rarity + '.txt')
     content = e.read().splitlines()
     return content
 
-def getslot(board, rarity):
+def getslot(board, rarity): #ugly and will be replaced with something more elegant.  picks a spot on the card that hasn't been filled in yet
     firstnum = getrand(5)
     secondnum = getrand(5)
     if board[firstnum][secondnum] != 0:
@@ -63,13 +26,13 @@ def getslot(board, rarity):
     else:
         board[firstnum][secondnum] = getitem(rarity)
 
-def getitem(rarity):
+def getitem(rarity): #randomly chooses an item of a particular rarity, and then removes it from that list so it can't be picked again
     size = len(rarity)
     num = getrand(size)
     out = rarity.pop(num)
     return out
 
-def fillboard(board):
+def fillboard(board): 
     for i in range (0,9):
         getslot(board, common)
     for i in range (0,9):
@@ -95,26 +58,19 @@ def writeboard(board):
         pass
     
     f = open(path + 'out.csv', 'w+')
-    i = 0
-    str0 = (str(board[0][i]) + "," + str(board[1][i]) + "," + str(board[2][i]) + "," + str(board[3][i]) + "," + str(board[4][i]) + '\n')
-    i = 1
-    str1 = (str(board[0][i]) + "," + str(board[1][i]) + "," + str(board[2][i]) + "," + str(board[3][i]) + "," + str(board[4][i]) + '\n')
-    i = 2
-    str2 = (str(board[0][i]) + "," + str(board[1][i]) + "," + str(board[2][i]) + "," + str(board[3][i]) + "," + str(board[4][i]) + '\n')
-    i = 3
-    str3 = (str(board[0][i]) + "," + str(board[1][i]) + "," + str(board[2][i]) + "," + str(board[3][i]) + "," + str(board[4][i]) + '\n')
-    i = 4
-    str4 = (str(board[0][i]) + "," + str(board[1][i]) + "," + str(board[2][i]) + "," + str(board[3][i]) + "," + str(board[4][i]) + '\n')
+    seq = []
 
-    seq = [str0,str1,str2,str3,str4]
+    for i in range(0,5):
+        strout = (str(board[0][i]) + "," + str(board[1][i]) + "," + str(board[2][i]) + "," + str(board[3][i]) + "," + str(board[4][i]) + '\n')
+        seq.append(strout)
+    
     f.writelines(seq)
     return
-    
 
-common = loadfile('common')
-uncommon = loadfile('uncommon')
-rare = loadfile('rare')
-ultrarare = loadfile('ultrarare')
-legendary = loadfile('legendary')
+common = loadfile('sample_common')
+uncommon = loadfile('sample_uncommon')
+rare = loadfile('sample_rare')
+ultrarare = loadfile('sample_ultrarare')
+legendary = loadfile('sample_legendary')
 
 genboard()
