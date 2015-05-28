@@ -2,6 +2,7 @@ import random
 import os
 import time
 import sys
+import copy
 
 path = os.getcwd() + "/" #Gets the directory.  Reads content files and saves output here.
 db = [[0,0,0,0,0],[0,0,0,0,0],[0,0,"FREE SPACE",0,0],[0,0,0,0,0],[0,0,0,0,0]] #The default, empty board.  0 is not a number used in bingo.  Signifies that a space hasn't been filled yet
@@ -17,6 +18,7 @@ def printboard(board): #prints the bingo board.  used for debugging
             else:
                 strout += (str(board[i][j]) + "\n")
         print(strout)
+    print("\n" + "\n")
 
 def getrand(input): #faster than typing random.randrange every time it's needed
     return random.randrange(0,input)
@@ -54,31 +56,31 @@ def fillboard(board, buffer): #fills in each empty slot on the board with a rand
     return 0
 
 def writeboard(board, outname): #saves the board as out.csv in the working directory
-	try:
-		os.remove(path + "*.csv")
-	except OSError:
-		pass
+    try:
+        os.remove(path + outname + ".csv")
+    except OSError:
+        pass
     
-	f = open(path + "bingo_"  + outname + ".csv", 'w+')
-	seq = []
+    f = open(path + outname + ".csv", 'w+')
+    seq = []
 
-	for i in range(0,5):
-		strout = ""
-		for j in range(0,5):
-			if j < 4:
-				strout += (str(board[i][j]) + ",")
-			else:
-				strout += (str(board[i][j]) + "\n")
-		seq.append(strout)
-	f.writelines(seq)
-	f.close()
+    for i in range(0,5):
+        strout = ""
+        for j in range(0,5):
+            if j < 4:
+                strout += (str(board[i][j]) + ",")
+            else:
+                strout += (str(board[i][j]) + "\n")
+        seq.append(strout)
+    f.writelines(seq)
+    f.close()
 
 def genboard(outname): #creates, fills, and writes a board
-	newboard = db
-	fillboard(newboard, fillbuffer())
-	printboard(newboard)
-	writeboard(newboard, outname)
-	return
+    newboard = copy.deepcopy(db)
+    fillboard(newboard, fillbuffer())
+    #printboard(newboard)
+    writeboard(newboard, outname)
+    return
 
 ###filenames
 common = loadfile('sample_common')
@@ -89,4 +91,16 @@ legendary = loadfile('sample_legendary')
 
 ###execution
 random.seed(time.time())
-genboard(sys.argv[1])
+if len(sys.argv) == 1:
+    genboard("bingo")
+elif len(sys.argv) == 2:
+    genboard(sys.argv[1])
+else:
+    genboard(sys.argv[1])
+    for i in range(2, (int(sys.argv[2]) + 1)):
+        common = loadfile('sample_common')
+        uncommon = loadfile('sample_uncommon')
+        rare = loadfile('sample_rare')
+        ultrarare = loadfile('sample_ultrarare')
+        legendary = loadfile('sample_legendary')
+        genboard(sys.argv[1] + '_' + str(i))
