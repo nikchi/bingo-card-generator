@@ -1,6 +1,9 @@
 import random
 import os
-path = os.getcwd() + "\\" #Gets the directory.  Reads content files and saves output here.
+import time
+import sys
+
+path = os.getcwd() + "/" #Gets the directory.  Reads content files and saves output here.
 db = [[0,0,0,0,0],[0,0,0,0,0],[0,0,"FREE SPACE",0,0],[0,0,0,0,0],[0,0,0,0,0]] #The default, empty board.  0 is not a number used in bingo.  Signifies that a space hasn't been filled yet
 
 ###Functions for operation
@@ -50,33 +53,32 @@ def fillboard(board, buffer): #fills in each empty slot on the board with a rand
                 board[i][j] = getitem(buffer)
     return 0
 
-def writeboard(board): #saves the board as out.csv in the working directory
-    try:
-        os.remove(path + 'out.csv')
-    except OSError:
-        pass
+def writeboard(board, outname): #saves the board as out.csv in the working directory
+	try:
+		os.remove(path + "*.csv")
+	except OSError:
+		pass
     
-    f = open(path + 'out.csv', 'w+')
-    seq = []
+	f = open(path + "bingo_"  + outname + ".csv", 'w+')
+	seq = []
 
-    for i in range(0,5):
-        strout = ""
-        for j in range(0,5):
-            if j < 4:
-                strout += (str(board[i][j]) + ",")
-            else:
-                strout += (str(board[i][j]) + "\n")
-        seq.append(strout)
-    
-    f.writelines(seq)
-    return
+	for i in range(0,5):
+		strout = ""
+		for j in range(0,5):
+			if j < 4:
+				strout += (str(board[i][j]) + ",")
+			else:
+				strout += (str(board[i][j]) + "\n")
+		seq.append(strout)
+	f.writelines(seq)
+	f.close()
 
-def genboard(): #creates, fills, and writes a board
-    newboard = db
-    fillboard(newboard, fillbuffer())
-    writeboard(newboard)
-    
-    return
+def genboard(outname): #creates, fills, and writes a board
+	newboard = db
+	fillboard(newboard, fillbuffer())
+	printboard(newboard)
+	writeboard(newboard, outname)
+	return
 
 ###filenames
 common = loadfile('sample_common')
@@ -87,4 +89,4 @@ legendary = loadfile('sample_legendary')
 
 ###execution
 random.seed(time.time())
-genboard()
+genboard(sys.argv[1])
